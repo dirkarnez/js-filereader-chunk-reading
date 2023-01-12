@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <input type="file" id="input-file" />
+
+    <script>
+        if (!(window.File && window.FileReader)) {
+            alert('The File APIs are not fully supported in this browser.');
+        }
+
+        const inputFile = document.getElementById("input-file");
+        inputFile.addEventListener('change', function (evt) {
+            var file = evt.target.files[0];
+
+            var aggregated = [];
+
+            if (file != undefined);
+            {
+                let reader = new FileReader();
+                let blob = file.slice(0, 2);
+                
+                const chunkSize = 
+                let end = 2;
+                while (end < file.size) {
+                    reader.onload = function (e) {
+                        var buffer = e.target.result;
+                        debugger;
+                        // let dv = new DataView(buffer);
+                        // let blockId = dv.getUint16(0, false); // false means read left to right (big endian)
+                        // let blockIdString = blockId.toString(16);
+                        // switch (blockIdString) {
+                        //     case "ffd8": {
+                        //         alert("JPG");
+                        //         break;
+                        //     }
+                        //     default: {
+                        //         alert("Do not know")
+                        //     }
+                        // }
+                    }
+                    reader.readAsText(blob);
+                    end +=
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
