@@ -19,34 +19,45 @@
         inputFile.addEventListener('change', function (evt) {
             var file = evt.target.files[0];
 
+            const chunkSize = 3; // bytes
+
             var aggregated = [];
 
             if (file != undefined);
             {
-                let reader = new FileReader();
-                let blob = file.slice(0, 2);
+                const size = file.size; // in bytes
+
+                const chunkCount = Math.ceil(size / chunkSize);
+
+                let start = 0;
+                let end = chunkSize;
                 
-                const chunkSize = 
-                let end = 2;
-                while (end < file.size) {
-                    reader.onload = function (e) {
-                        var buffer = e.target.result;
-                        debugger;
-                        // let dv = new DataView(buffer);
-                        // let blockId = dv.getUint16(0, false); // false means read left to right (big endian)
-                        // let blockIdString = blockId.toString(16);
-                        // switch (blockIdString) {
-                        //     case "ffd8": {
-                        //         alert("JPG");
-                        //         break;
-                        //     }
-                        //     default: {
-                        //         alert("Do not know")
-                        //     }
-                        // }
+                for (var i = 0; i < chunkCount; i++) {
+                    console.log(start, end);
+                    
+                    ((blob) => {
+                        let reader = new FileReader();
+                        reader.onload = (e) => {
+                            var buffer = e.target.result;
+                            console.log(`>${buffer}<`);
+                            aggregated = [
+                                ...aggregated, 
+                                ...buffer
+                                .split(",")
+                                .filter(ele => !!ele)
+                                .map(ele => Number(ele))
+                            ]
+                            
+                            console.log(`sum = ${aggregated.reduce((p, c) => p + c, 0)}`);
+                        }
+                        reader.readAsText(blob);
+                    })(file.slice(start, end));
+
+                    start = end;
+                    end += chunkSize;
+                    if (end >= size) {
+                        end = size;
                     }
-                    reader.readAsText(blob);
-                    end +=
                 }
             }
         });
