@@ -21,6 +21,8 @@
 
             const chunkSize = 3; // bytes
 
+            var tail = "";
+
             var aggregated = [];
 
             if (file != undefined);
@@ -33,25 +35,42 @@
                 let end = chunkSize;
                 
                 for (var i = 0; i < chunkCount; i++) {
-                    console.log(start, end);
+                    console.log(size, start, end);
                     
-                    ((blob) => {
+                    ((blob, isLast) => {
                         let reader = new FileReader();
                         reader.onload = (e) => {
-                            var buffer = e.target.result;
-                            console.log(`>${buffer}<`);
+                            var buffer = `${!!tail ? tail : ""}${e.target.result}`;
+                            
+                            var current = "";
+                            const lastIndexOf = buffer.lastIndexOf(",");
+                            if (lastIndexOf > -1) {
+                                current = buffer.substr(0, lastIndexOf);
+                                tail = buffer.substr(lastIndexOf);
+                            } else {
+                                current = buffer;
+                            }
+
+                            if (isLast) {
+                                current = `${current}${!!tail ? tail : ""}`;
+                            }
+                            
+                            console.log(`buffer: >${buffer}<, current >${current}<, tail >${tail}<`);
+
+                            var temp = current.split(",").filter(ele => !!ele).map(ele => Number(ele));
+
                             aggregated = [
                                 ...aggregated, 
-                                ...buffer
-                                .split(",")
-                                .filter(ele => !!ele)
-                                .map(ele => Number(ele))
+                                ...temp
                             ]
                             
-                            console.log(`sum = ${aggregated.reduce((p, c) => p + c, 0)}`);
+                            console.log(`sum = ${aggregated.reduce((p, c) => {
+                                console.log(`adding ${c}`);
+                                return p + c;
+                            }, 0)}`);
                         }
                         reader.readAsText(blob);
-                    })(file.slice(start, end));
+                    })(file.slice(start, end), end == size);
 
                     start = end;
                     end += chunkSize;
